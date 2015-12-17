@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="496.0" prefWidth="371.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <children>
+      <Button fx:id="botonBuscar" layoutX="286.0" layoutY="29.0" mnemonicParsing="false" onAction="#buscar" prefHeight="42.0" prefWidth="85.0" text="Buscar" AnchorPane.rightAnchor="0.0" />
+      <ListView fx:id="listView" layoutY="71.0" prefHeight="397.0" prefWidth="371.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="71.0" />
+      <TextArea fx:id="textoBuscar" layoutY="29.0" prefHeight="42.0" prefWidth="286.0" promptText="Introduce aquí el nombre del pokemon" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="85.0" />
+      <Text fx:id="statusText" layoutY="486.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="371.0000028858194" AnchorPane.bottomAnchor="6.93408203125" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+         <font>
+            <Font size="12.0" />
+         </font>
+      </Text>
+      <MenuBar prefHeight="29.0" prefWidth="371.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <menus>
+          <Menu mnemonicParsing="false" text="Archivo">
+            <items>
+              <MenuItem fx:id="menuRefresh" mnemonicParsing="false" onAction="#refrescarLista" text="Refrescar Lista" />
+                  <MenuItem mnemonicParsing="false" onAction="#actualizarBBDD" text="Actualizar BBDD" />
+                  <MenuItem mnemonicParsing="false" onAction="#cerrar" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Ayuda">
+            <items>
+              <MenuItem fx:id="menuAbout" mnemonicParsing="false" onAction="#about" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <ImageView fx:id="imagenPokemon" fitHeight="258.0" fitWidth="310.0" layoutX="61.0" layoutY="71.0" pickOnBounds="true" preserveRatio="true" visible="false" AnchorPane.leftAnchor="61.0" AnchorPane.rightAnchor="0.0" />
+      <Button fx:id="botonVolver" layoutX="14.0" layoutY="440.0" mnemonicParsing="false" onAction="#volverMenu" prefHeight="14.0" prefWidth="36.0" text="Volver" visible="false" AnchorPane.bottomAnchor="42.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="321.0" />
+      <Text fx:id="datosPokemon" layoutX="13.0" layoutY="400.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false" wrappingWidth="345.7294921875" AnchorPane.bottomAnchor="93.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="12.2705078125" AnchorPane.topAnchor="387.0" />
+      <Text fx:id="pokemonNameText" layoutX="109.0" layoutY="366.0" strokeType="OUTSIDE" strokeWidth="0.0" visible="false">
+         <font>
+            <Font size="23.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>
