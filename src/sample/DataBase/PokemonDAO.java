@@ -89,7 +89,6 @@ public class PokemonDAO {
                                 + "\n· Peso:                  " + result.getString("PESO") + " kg"
                                 + "\n· URL de la imagen:      " + result.getString("IMAGEN")
                                 + "\n· URL de referencia:     " + result.getString("URL_REFERENCIA") + "\n\n";
-
                 result.close();
                 statement.close();
                 conexion.close();
@@ -167,13 +166,7 @@ public class PokemonDAO {
         result = statement.executeQuery("SELECT * FROM POKEMONS WHERE NOMBRE = '" + nombrePokemon + "'");
 
         if (result.next()) {
-            datosPokemon = "ID del Pokemon:     " + result.getString("ID")
-                    + "\nNombre:        " + result.getString("NOMBRE").toUpperCase()
-                    + "\nPuntos de vida:        " + result.getInt("HP")
-                    + "\nPeso:      " + result.getString("PESO") + " kg"
-                    + "\nURL de la imagen:      " + result.getString("IMAGEN")
-                    + "\nURL de referencia:     " + result.getString("URL_REFERENCIA") + "\n\n";
-
+            datosPokemon = result.getString("ID");
             result.close();
             statement.close();
             conexion.close();

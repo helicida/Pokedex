@@ -1,14 +1,15 @@
 package sample;
 
 import javafx.application.Platform;
+import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -21,6 +22,8 @@ public class Controller {
     PokemonDAO DAO = new PokemonDAO();
 
     // Todos los elementos de JAVAFX
+    public ScrollPane zoomScroll;           // ScrollPane en la que meteremos la imagen
+    public Slider slider;                   // Slider para hacer zoom a la imagen del pokemon
     public TextArea textoBuscar;            // TextArea en el que se introduce el nombre del Pokemon a buscar
     public Button botonBuscar;              // Boton que hay que pulsar para hacer la busqueda
     public Button botonVolver;              // Boton para volver de los details al menú
@@ -34,6 +37,10 @@ public class Controller {
     // Métodos
 
     public void initialize(){
+
+        imagenPokemon.setFitWidth(300);
+        imagenPokemon.setFitHeight(300);
+        slider.setValue(imagenPokemon.getFitHeight() / 10);
 
         refrescarLista(null);   // Refrescamos la lista
 
@@ -50,8 +57,18 @@ public class Controller {
 
                 // Aquí establecemos que textos e imagen mostrar
                 imagenPokemon.setImage(new Image(DAO.getURLImagen(idPokemonSeleccionado)));    // Establece la imagen del Pokemon bajandola de la API
+                zoomScroll.setContent(imagenPokemon);
                 pokemonNameText.setText(DAO.getNombrePokemon(idPokemonSeleccionado));   // Carga el nombre del Pokemon
                 datosPokemon.setText(DAO.getDetallesPokemon(idPokemonSeleccionado));    // Carga los detalles del Pokemon
+
+
+                slider.valueProperty().addListener(new ChangeListener<Number>() {
+                    public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+                        imagenPokemon.setFitHeight(new_val.intValue() * 10);
+                        imagenPokemon.setFitWidth(new_val.intValue() * 10);
+                    }
+                });
+
             }
         });
 
@@ -66,7 +83,8 @@ public class Controller {
 
         try{
             // pokemonNameText.setText(DAO.getNombrePokemon(idPokemonSeleccionado)); FUNCIÓN BUSCAR por terminar
-            datosPokemon.setText(DAO.buscarPokemon(textoBuscar.getText().toLowerCase()));
+            pokemonNameText.setText(DAO.getNombrePokemon(Integer.parseInt(DAO.buscarPokemon(textoBuscar.getText().toLowerCase()))));   // Carga el nombre del Pokemon
+            datosPokemon.setText(DAO.getDetallesPokemon(Integer.parseInt(DAO.buscarPokemon(textoBuscar.getText().toLowerCase()))));
             imagenPokemon.setImage(new Image(DAO.getURLImagen(textoBuscar.getText().toLowerCase())));
         }
         catch (Exception one){
@@ -97,6 +115,8 @@ public class Controller {
         }
 
         listView.setItems(items);   // Y se lo acoplamos al array list
+
+        mostrarMenu(true);
     }
 
     public void actualizarBBDD(ActionEvent actionEvent) {
@@ -126,12 +146,16 @@ public class Controller {
         if(mostrar == true){
             pokemonNameText.setVisible(true);   // Mostramos el nombre del pokemon con su ID
             datosPokemon.setVisible(true);      // Mostramos los detalles del pokemon
+            zoomScroll.setVisible(true);        // Mostramos el ScrollPane en el que tenemos la imagen
+            slider.setVisible(true);            // Mostramos el Slider que usamos apra hacer zoom
             imagenPokemon.setVisible(true);     // Mostramos la imagen del pokemon
             botonVolver.setVisible(true);       // Mostramos el boton volver para retroceder al menu
         }
         else{
             pokemonNameText.setVisible(false);   // Ocultamos el nombre del pokemon con su ID
             datosPokemon.setVisible(false);      // Ocultamos los detalles del pokemon
+            zoomScroll.setVisible(false);        // Ocultamos el ScrollPane en el que tenemos la imagen
+            slider.setVisible(false);            // Ocultamos el Slider que usamos apra hacer zoom
             imagenPokemon.setVisible(false);     // Ocultamos la imagen del pokemon
             botonVolver.setVisible(false);       // Ocultamos el boton volver para retroceder al menu
         }
