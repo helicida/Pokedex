@@ -3,10 +3,9 @@ package sample.DataBase;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
+import sample.Controller;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.Connection;
@@ -19,40 +18,45 @@ import java.util.Scanner;
 /**
  * Created by sergi on 12/12/15.
  */
-public class DataBaseController {
+public class DataBaseController extends Thread{
 
     // Variables de nuestra DataBase:
 
-    private static Scanner teclat = new Scanner(System.in);
+    private Scanner teclat = new Scanner(System.in);
+    private String BASE_URL = "http://pokeapi.co/";
+    private String POKEDEX_URL = BASE_URL + "api/v1/pokedex/1/";
+    private String URL_REFERNCIA = "api/v1/pokemon/1/";
+    private String URL_POKEMON = BASE_URL + URL_REFERNCIA;
+    private Pokedex pokedex;
+    private Controller a;
 
-    private static String BASE_URL = "http://pokeapi.co/";
-    private static String POKEDEX_URL = BASE_URL + "api/v1/pokedex/1/";
-    private static String URL_REFERNCIA = "api/v1/pokemon/1/";
-    private static String URL_POKEMON = BASE_URL + URL_REFERNCIA;
-    private static Pokedex pokedex;
+    public String statusText = "";
 
-    public static void main(String[] args) {
+    public DataBaseController(Controller a){
+        this.a = a;
+    }
+
+    public void run(){
         deleteDB();
         createDatabase();
         downloadPokemons();
         insertPokemons();
     }
 
-    public static void createDatabase() {
+    public void createDatabase() {
+
+        Connection conexion = null;
+        Statement stmt = null;
 
         try {
-            Connection conexion = null;
-            Statement stmt = null;
 
             Class.forName("org.sqlite.JDBC");
             conexion = DriverManager.getConnection("jdbc:sqlite:pokemon_sbarjola.db");
             stmt = conexion.createStatement();
 
+            a.setStatusText("Se ha accedido correctamente a la base de datos");
 
-            System.out.println("Se ha accedido correctamente a la base de datos");
-            System.out.println("----------------------------------------------------");
-            System.out.println("Se procederá a crear las tablas.");
-            System.out.println("----------------------------------------------------");
+            a.setStatusText("Se procederá a crear las tablas.");
 
             // Hacemos una sola tabla para los Pokemon
 
@@ -78,16 +82,16 @@ public class DataBaseController {
         }
     }
 
-    public static void deleteDB(){
+    public void deleteDB(){
 
         File file = new File("pokemon_sbarjola.db");   // Ruta del archivo de nuestra base de datos
 
         try{
             if(file.delete()){  // Lo eliminamos
-                System.out.println(file.getName() + ": se ha eliminado la base de datos antigua");
+                a.setStatusText(file.getName() + ": se ha eliminado la base de datos antigua");
             }
             else{   // Si no se ha podido eliminar
-                System.out.println("No existe ninguna base de datos anterior o no se ha podido eliminar");
+                a.setStatusText("No existe ninguna base de datos anterior o no se ha podido eliminar");
             }
         } catch (Exception e){
             e.printStackTrace();
@@ -95,9 +99,9 @@ public class DataBaseController {
     }
 
 
-    public static void downloadPokemons(){
+    public void downloadPokemons(){
 
-        System.out.println("Descargando Pokemon y generando los objetos \n----------------------------------------------");
+        statusText = "Descargando Pokemon y generando los objetos \n----------------------------------------------";
         pokedex = new Pokedex();
         JSONObject pokedexJO = (JSONObject) JSONValue.parse(getJSON(POKEDEX_URL));
         pokedex.setNombre(pokedexJO.get("name").toString());
@@ -123,26 +127,24 @@ public class DataBaseController {
             pokemon.setHp(pokemonDetailsJO.get("hp").toString());
             pokemon.setId(pokemonDetailsJO.get("pkdx_id").toString());
             pokemon.setImagen(BASE_URL + "media/img/" + pokemon.getId() + ".png");
-            System.out.println(pokemon.toStringDetailed());
-            System.out.println("\n" + pokemon.getNombre().toUpperCase()+ " se ha generado -- (" + iterador + "/"+pokemonsJA.size()+")");
+            a.setStatusText("\n" + pokemon.getNombre().toUpperCase() + " se ha generado -- (" + iterador + "/" + pokemonsJA.size() + ")");
             pokemons.add(pokemon);
         }
         pokedex.setPokemons(pokemons);
     }
 
-    public static void insertPokemons(){
+    public void insertPokemons(){
+
+        Class<Controller> x = Controller.class;
 
         for (int iterador = 0; iterador < pokedex.getPokemons().size(); iterador++){
 
             Connection conexion = null;
-            Statement stmt = null;
 
             try{
-
                 Class.forName("org.sqlite.JDBC");
                 conexion = DriverManager.getConnection("jdbc:sqlite:pokemon_sbarjola.db");
                 conexion.setAutoCommit(false);
-                stmt = conexion.createStatement();
 
                 String sql = "INSERT INTO POKEMONS" +
                         "(ID, NOMBRE, URL_REFERENCIA, IMAGEN, PESO, HP) VALUES" +
@@ -157,22 +159,22 @@ public class DataBaseController {
                 prepStat.setString(5, pokedex.getPokemons().get(iterador).getPeso());
                 prepStat.setString(6, pokedex.getPokemons().get(iterador).getHp());
 
-
                 prepStat.executeUpdate();
                 prepStat.close();
                 conexion.commit();
                 conexion.close();
 
-                System.out.println("- Se ha insertado '" + pokedex.getPokemons().get(iterador).getNombre() + "' correctamente");
-
+                a.setStatusText("- Se ha insertado '" + pokedex.getPokemons().get(iterador).getNombre() + "' correctamente");
             } catch (Exception e) {
                 System.err.println(e.getClass().getName() + ": " + e.getMessage());
                 System.exit(0);
             }
         }
+        a.refrescarLista(null);
+        a.setStatusText(" · La base de datos se ha actualizado correctamente");
     }
 
-    public static String getJSON(String URLtoRead){
+    public String getJSON(String URLtoRead){
 
         try{
             StringBuilder stringJSON = new StringBuilder();
@@ -190,8 +192,8 @@ public class DataBaseController {
             return stringJSON.toString();
         }
         catch (Exception one){
+            a.setStatusText(" Error al intentar acceder a la API ");
             return "Error al intentar acceder a la API";
         }
     }
-
 }

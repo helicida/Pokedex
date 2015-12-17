@@ -14,7 +14,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
+import sample.DataBase.DataBaseController;
 import sample.DataBase.PokemonDAO;
+import java.io.IOException;
 
 public class Controller {
 
@@ -34,13 +36,18 @@ public class Controller {
     public Text statusText;                 // Texto en la parte inferior de la ventana que muestra el estado de la base de datos
     public ObservableList<String> items = FXCollections.observableArrayList();  // ObservableList para nuestro listView
 
-    // Métodos
+    public boolean conexion;
 
+    public void setStatusText(String mensaje){
+        statusText.setText(mensaje);
+    }
+
+    // Métodos
     public void initialize(){
 
-        imagenPokemon.setFitWidth(300);
-        imagenPokemon.setFitHeight(300);
-        slider.setValue(imagenPokemon.getFitHeight() / 10);
+        imagenPokemon.setFitWidth(300);     //  Ajustamos el tamaño de la imagen
+        imagenPokemon.setFitHeight(300);    // // Ajustamos el tamaño de la imagen
+        slider.setValue(imagenPokemon.getFitHeight() / 10); // Ajustamos el tamaño del slider
 
         refrescarLista(null);   // Refrescamos la lista
 
@@ -106,6 +113,8 @@ public class Controller {
 
     public void refrescarLista(ActionEvent actionEvent) {
 
+        statusText.setText("· Actualizando lista");
+
         mostrarDetalles(false); // Mostramos los detalles
 
         items.clear();  // Limpiamos el arrayList
@@ -116,10 +125,19 @@ public class Controller {
 
         listView.setItems(items);   // Y se lo acoplamos al array list
 
-        mostrarMenu(true);
+        mostrarMenu(true);  // Mostramos el menú
     }
 
-    public void actualizarBBDD(ActionEvent actionEvent) {
+    public void actualizarBBDD(ActionEvent actionEvent) throws InterruptedException, IOException {
+
+        refrescarLista(null);   // Refrescamos la lista
+        items.clear();          // Limpiamos el observableList
+        items.add("\n ·     Actualizando BBDD");   // Añadimos al observableList que no se ha podido encontrar nin gun pokemon
+        listView.setItems(items);   // Y fijamos el observableList a la lista
+
+        DataBaseController update = new DataBaseController(this);   // Thread desde el que descargaremos la BBDD
+
+        update.start(); // Arrancamos el hilo
 
     }
 
