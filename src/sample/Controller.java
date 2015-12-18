@@ -1,8 +1,6 @@
 package sample;
 
 import javafx.application.Platform;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -36,8 +34,6 @@ public class Controller {
     public Text statusText;                 // Texto en la parte inferior de la ventana que muestra el estado de la base de datos
     public ObservableList<String> items = FXCollections.observableArrayList();  // ObservableList para nuestro listView
 
-    public boolean conexion;
-
     public void setStatusText(String mensaje){
         statusText.setText(mensaje);
     }
@@ -68,14 +64,12 @@ public class Controller {
                 pokemonNameText.setText(DAO.getNombrePokemon(idPokemonSeleccionado));   // Carga el nombre del Pokemon
                 datosPokemon.setText(DAO.getDetallesPokemon(idPokemonSeleccionado));    // Carga los detalles del Pokemon
 
-
                 slider.valueProperty().addListener(new ChangeListener<Number>() {
                     public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
                         imagenPokemon.setFitHeight(new_val.intValue() * 10);
                         imagenPokemon.setFitWidth(new_val.intValue() * 10);
                     }
                 });
-
             }
         });
 

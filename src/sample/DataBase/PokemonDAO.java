@@ -18,7 +18,6 @@ public class PokemonDAO {
         Statement stmt = null;
 
         try{
-
             String pokemonMenu;
 
             Class.forName("org.sqlite.JDBC");
@@ -41,11 +40,11 @@ public class PokemonDAO {
     }
 
     public String getNombrePokemon(int pokemonId){
+
         Connection conexion = null;
         Statement stmt = null;
 
         try{
-
             String nombrePokemon;
 
             Class.forName("org.sqlite.JDBC");
@@ -75,7 +74,6 @@ public class PokemonDAO {
         Statement stmt = null;
 
         try{
-
             String detallesPokemon;
 
             Class.forName("org.sqlite.JDBC");
@@ -85,10 +83,10 @@ public class PokemonDAO {
             ResultSet result;
             result = statement.executeQuery("SELECT * FROM POKEMONS WHERE ID = " + pokemonId);
             if (result.next()){
-                detallesPokemon = "· Puntos de vida:        " + result.getInt("HP")
-                                + "\n· Peso:                  " + result.getString("PESO") + " kg"
-                                + "\n· URL de la imagen:      " + result.getString("IMAGEN")
-                                + "\n· URL de referencia:     " + result.getString("URL_REFERENCIA") + "\n\n";
+                detallesPokemon = "· Vida:            " + result.getInt("HP")
+                                + "\n· Peso:           " + result.getString("PESO") + " kg"
+                                + "\n· Imagen:       " + result.getString("IMAGEN")
+                                + "\n· Pokemon:     " + result.getString("URL_REFERENCIA") + "\n\n";
                 result.close();
                 statement.close();
                 conexion.close();
